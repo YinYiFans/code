@@ -1,0 +1,35 @@
+title:data2;
+data:file is D:\data\data4.dat;
+variable:
+names are age edu mar res inc la chr 
+wb1-wb5 se1-se3 fc1-fc5 hl1-hl3;
+usevariable are age edu mar res la chr 
+wb1-wb5 se1-se3 fc1-fc5 hl1-hl3;
+ANALYSIS:
+TYPE = GENERAL;
+ESTIMATOR = ML;
+BOOTSTRAP=2000;
+model:
+WB by wb1-wb5;
+SE by se1-se3;
+HL by hl1-hl3;
+FC by fc1-fc5;
+
+WB ON HL(b1);
+WB ON SE(b2);
+WB ON FC(cdash);
+SE on HL(d1);
+SE on FC(a2);
+HL on FC(a1);
+WB ON age edu mar res la chr;
+
+MODEL CONSTRAINT:
+  NEW(a1b1 a2b2 a1d1b2 TOTALIND TOTAL);
+  a1b1 = a1*b1;
+  a2b2 = a2*b2;
+  a1d1b2 = a1*d1*b2;
+  TOTALIND=a1*b1 + a2*b2 + a1*d1*b2;
+  TOTAL = a1*b1 + a2*b2 + a1*d1*b2 + cdash;
+output:
+  STDYX;
+  cint(bcbootstrap);
